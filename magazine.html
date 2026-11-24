@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horology Journal | AURA CHRONOS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="siteNav"></div>
+
+    <section class="page-top">
+        <div class="section-header reveal">
+            <span class="section-kicker">Aura Editorial</span>
+            <h1 class="serif">Horological Insights</h1>
+            <p>Essays, interviews, and collector guides exploring the past, present, and future of mechanical timekeeping.</p>
+        </div>
+
+        <div class="filter-pills" id="articleFilters" style="justify-content:center;margin-bottom:2.75rem;"></div>
+
+        <div class="grid-2" id="articlesGrid"></div>
+    </section>
+
+    <!-- ARTICLE READER MODAL -->
+    <div class="modal-overlay" id="articleModal" onclick="if(event.target===this) AuraApp.closeModal('articleModal')">
+        <div class="modal-box" style="max-width:780px;">
+            <button class="modal-close" aria-label="Close Article" onclick="AuraApp.closeModal('articleModal')"><i class="fas fa-times"></i></button>
+            <div id="articleReaderBody"></div>
+        </div>
+    </div>
+
+    <div id="siteFooter"></div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let activeArtCat = 'ALL';
+        const artCats = ['ALL', 'HISTORY', 'INTERVIEW', "COLLECTOR'S GUIDE", 'CRAFTSMANSHIP'];
+
+        function renderArticleFilters() {
+            const host = document.getElementById('articleFilters');
+            host.innerHTML = artCats.map(c => `
+                <button class="filter-pill ${c === activeArtCat ? 'active' : ''}" onclick="setArticleCategory('${c.replace("'", "\\'")}')">${c}</button>
+            `).join('');
+        }
+
+        function setArticleCategory(cat) {
+            activeArtCat = cat;
+            renderArticleFilters();
+            renderArticles();
+        }
+
+        function renderArticles() {
+            const grid = document.getElementById('articlesGrid');
+            const list = activeArtCat === 'ALL' ? articles : articles.filter(a => a.category === activeArtCat);
+
+            grid.innerHTML = list.map(a => `
+                <article class="card article-card reveal" onclick="openArticle(${a.id})">
+                    <div style="overflow:hidden;position:relative;">
+                        <span class="watch-badge">${a.category}</span>
+                        <img src="${a.img}" alt="${a.title}">
+                    </div>
+                    <div class="article-card-body">
+                        <div style="font-size:0.76rem;color:var(--text-muted);margin-bottom:0.55rem;">
+                            ${a.date} · ${a.readTime} · By ${a.author}
+                        </div>
+                        <h2 class="serif" style="font-size:1.65rem;line-height:1.25;margin-bottom:0.75rem;">${a.title}</h2>
+                        <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:1.5rem;">${a.subtitle}</p>
+                        <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:1rem;border-top:1px solid var(--glass-border);">
+                            <span style="font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--primary);font-weight:600;">Read Full Essay</span>
+                            <i class="fas fa-arrow-right" style="color:var(--primary);"></i>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+            AuraApp.observeReveals();
+        }
+
+        function openArticle(id) {
+            const a = articles.find(art => art.id === id);
+            if (!a) return;
+            document.getElementById('articleReaderBody').innerHTML = `
+                <span class="section-kicker">${a.category} · ${a.readTime}</span>
+                <h2 class="serif" style="font-size:clamp(1.75rem,3.5vw,2.5rem);line-height:1.15;margin-bottom:0.75rem;">${a.title}</h2>
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1.5rem;">
+                    By <strong style="color:var(--text);">${a.author}</strong> (${a.role}) · ${a.date}
+                </div>
+                <img src="${a.img}" alt="${a.title}" style="width:100%;max-height:360px;object-fit:cover;border-radius:10px;border:1px solid var(--glass-border);margin-bottom:1.75rem;">
+                <div style="display:flex;flex-direction:column;gap:1.15rem;color:#d6d6de;font-size:1.02rem;line-height:1.8;">
+                    ${a.content.map(p => `<p>${p}</p>`).join('')}
+                </div>
+                <div style="margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--glass-border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <button class="btn btn-ghost btn-sm" onclick="copyArticleLink('${a.title.replace(/'/g, "\\'")}')"><i class="fas fa-share-alt"></i> Share Article</button>
+                    <a href="collections.html" class="btn btn-fill btn-sm">Explore Related Timepieces</a>
+                </div>
+            `;
+            AuraApp.openModal('articleModal');
+        }
+
+        function copyArticleLink(title) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(window.location.href).catch(() => {});
+            }
+            AuraApp.showToast(`Link copied for "${title}"`);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderArticleFilters();
+            renderArticles();
+        });
+    </script>
+</body>
+</html>

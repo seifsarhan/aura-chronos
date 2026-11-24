@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier Services | AURA CHRONOS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="siteNav"></div>
+
+    <section class="page-top">
+        <div class="section-header reveal">
+            <span class="section-kicker">Geneva &amp; Cairo Atelier</span>
+            <h1 class="serif">Exquisite Care</h1>
+            <p>Our commitment to your timepiece lasts a lifetime—from complete mechanical overhauls to accredited provenance certification.</p>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:4rem;">
+            <div class="card reveal">
+                <i class="fas fa-tools" style="font-size:2.2rem;color:var(--primary);margin-bottom:1.25rem;"></i>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:0.65rem;">
+                    <h3 class="serif" style="font-size:1.55rem;">Complete Overhaul &amp; Restoration</h3>
+                    <span class="price" style="font-size:0.9rem;white-space:nowrap;" data-service-price="14500">14,500 EGP</span>
+                </div>
+                <p style="color:var(--text-muted);margin-bottom:1.25rem;">Full disassembly of the caliber, ultrasonic cleaning of every jewel and gear, replacement of worn gaskets, lubrication, and 5-position timing regulation.</p>
+                <div style="margin-top:auto;font-size:0.8rem;color:var(--primary);letter-spacing:1.2px;text-transform:uppercase;"><i class="far fa-clock"></i> Turnaround: 2 – 3 Weeks · 2-Year Service Warranty</div>
+            </div>
+
+            <div class="card reveal">
+                <i class="fas fa-gem" style="font-size:2.2rem;color:var(--primary);margin-bottom:1.25rem;"></i>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:0.65rem;">
+                    <h3 class="serif" style="font-size:1.55rem;">Bespoke Strap &amp; Case Fitting</h3>
+                    <span class="price" style="font-size:0.9rem;white-space:nowrap;" data-service-price="6500">6,500 EGP</span>
+                </div>
+                <p style="color:var(--text-muted);margin-bottom:1.25rem;">Hand-stitched alligator, calfskin, or titanium bracelet tailoring measured precisely to your wrist, plus black-polish case refinishing.</p>
+                <div style="margin-top:auto;font-size:0.8rem;color:var(--primary);letter-spacing:1.2px;text-transform:uppercase;"><i class="far fa-clock"></i> Turnaround: Same Day – 5 Days</div>
+            </div>
+
+            <div class="card reveal">
+                <i class="fas fa-shield-alt" style="font-size:2.2rem;color:var(--primary);margin-bottom:1.25rem;"></i>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:0.65rem;">
+                    <h3 class="serif" style="font-size:1.55rem;">Authentication &amp; Appraisal</h3>
+                    <span class="price" style="font-size:0.9rem;white-space:nowrap;" data-service-price="4200">4,200 EGP</span>
+                </div>
+                <p style="color:var(--text-muted);margin-bottom:1.25rem;">Microscopic movement inspection, metallurgy verification, and official stamped valuation dossier accepted by international insurers.</p>
+                <div style="margin-top:auto;font-size:0.8rem;color:var(--primary);letter-spacing:1.2px;text-transform:uppercase;"><i class="far fa-clock"></i> Turnaround: 48 Hours</div>
+            </div>
+
+            <div class="card reveal">
+                <i class="fas fa-tint" style="font-size:2.2rem;color:var(--primary);margin-bottom:1.25rem;"></i>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:0.65rem;">
+                    <h3 class="serif" style="font-size:1.55rem;">Ultrasonic Spa &amp; Pressure Test</h3>
+                    <span class="price" style="font-size:0.9rem;white-space:nowrap;" data-service-price="2500">2,500 EGP</span>
+                </div>
+                <p style="color:var(--text-muted);margin-bottom:1.25rem;">Deep non-abrasive spa cleansing of case and bracelet paired with wet/dry barometric water-resistance certification up to 30 ATM.</p>
+                <div style="margin-top:auto;font-size:0.8rem;color:var(--primary);letter-spacing:1.2px;text-transform:uppercase;"><i class="far fa-clock"></i> Turnaround: 2 Hours · Complimentary for Aura Owners</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AUTHENTICITY & SERIAL VERIFICATION -->
+    <section id="verify" style="background: var(--bg-light); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
+        <div class="container" style="max-width:860px;padding:0;">
+            <div class="section-header reveal" style="margin-bottom:2.25rem;">
+                <span class="section-kicker">Vault Archive Lookup</span>
+                <h2 class="serif">Verify Timepiece Provenance</h2>
+                <p>Enter any Aura Chronos reference number to inspect its official Geneva registry dossier.</p>
+            </div>
+
+            <div class="panel reveal">
+                <form id="verifyForm" style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+                    <div class="search-input-wrap" style="flex:1;">
+                        <i class="fas fa-fingerprint"></i>
+                        <input type="text" id="serialInput" placeholder="Enter Reference (e.g., AUR-PH-001 or RLX-SH-008)" required>
+                    </div>
+                    <button type="submit" class="btn btn-fill">Verify Reference</button>
+                </form>
+
+                <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem;align-items:center;">
+                    <span style="font-size:0.76rem;color:var(--text-muted);">Try sample:</span>
+                    <button type="button" class="filter-pill" onclick="fillAndVerify('AUR-PH-001')">AUR-PH-001</button>
+                    <button type="button" class="filter-pill" onclick="fillAndVerify('AUR-GH-003')">AUR-GH-003</button>
+                    <button type="button" class="filter-pill" onclick="fillAndVerify('RLX-SH-008')">RLX-SH-008</button>
+                    <button type="button" class="filter-pill" onclick="fillAndVerify('PPK-NB-009')">PPK-NB-009</button>
+                </div>
+
+                <div id="verifyResult" style="margin-top:1.5rem;display:none;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICE REQUEST FORM -->
+    <section id="serviceRequest">
+        <div class="container" style="max-width:860px;padding:0;">
+            <div class="section-header reveal" style="margin-bottom:2.5rem;">
+                <span class="section-kicker">Atelier Intake</span>
+                <h2 class="serif">Schedule a Watchmaker Service</h2>
+                <p>Book an in-salon inspection or insured doorstep collection for your timepiece.</p>
+            </div>
+
+            <div class="panel reveal">
+                <form id="serviceForm">
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="srvName" placeholder="Your Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email or Phone</label>
+                            <input type="text" id="srvContact" placeholder="+20 100 000 0000" required>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Timepiece Brand &amp; Model</label>
+                            <input type="text" id="srvWatch" placeholder="e.g., Aura Phantom Obsidian / Rolex Submariner" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Service Required</label>
+                            <select id="srvType">
+                                <option value="Complete Overhaul & Restoration">Complete Overhaul &amp; Restoration</option>
+                                <option value="Bespoke Strap & Case Fitting">Bespoke Strap &amp; Case Fitting</option>
+                                <option value="Authentication & Appraisal">Authentication &amp; Appraisal</option>
+                                <option value="Ultrasonic Spa & Pressure Test">Ultrasonic Spa &amp; Pressure Test</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Atelier &amp; Notes</label>
+                        <textarea id="srvNotes" rows="3" placeholder="Tell us about any timing issues, engraving requests, or preferred pickup window..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-fill" style="width:100%;">Submit Service Request</button>
+                </form>
+                <div id="serviceSuccess" style="display:none;margin-top:1.25rem;padding:1.15rem;border:1px solid var(--gold-border);background:var(--primary-soft);border-radius:6px;font-size:0.92rem;"></div>
+            </div>
+        </div>
+    </section>
+
+    <div id="siteFooter"></div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+    <script>
+        function updateServicePrices() {
+            document.querySelectorAll('[data-service-price]').forEach(el => {
+                el.textContent = AuraApp.formatPrice(Number(el.dataset.servicePrice));
+            });
+        }
+
+        function fillAndVerify(code) {
+            document.getElementById('serialInput').value = code;
+            runVerification(code);
+        }
+
+        function runVerification(rawCode) {
+            const code = rawCode.trim().toUpperCase();
+            const match = products.find(p => p.ref.toUpperCase() === code || p.name.toUpperCase().includes(code));
+            const out = document.getElementById('verifyResult');
+            out.style.display = 'block';
+
+            if (match) {
+                out.innerHTML = `
+                    <div style="display:flex;gap:1.25rem;align-items:center;flex-wrap:wrap;padding:1.25rem;border-radius:8px;border:1px solid rgba(52,199,123,0.4);background:rgba(52,199,123,0.06);">
+                        <img src="${match.img}" alt="${match.name}" style="width:82px;height:82px;border-radius:8px;object-fit:cover;border:1px solid var(--gold-border);">
+                        <div style="flex:1;min-width:200px;">
+                            <div style="color:var(--success);font-size:0.76rem;letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.25rem;">
+                                <i class="fas fa-check-circle"></i> Verified Authentic — Geneva Archive
+                            </div>
+                            <h4 class="serif" style="font-size:1.3rem;">${match.brand} ${match.name}</h4>
+                            <div style="font-size:0.84rem;color:var(--text-muted);">Ref: ${match.ref} · ${match.specs.caliber} · ${match.specs.caseMaterial}</div>
+                        </div>
+                        <a href="product.html?id=${match.id}" class="btn btn-sm">View Dossier</a>
+                    </div>
+                `;
+            } else {
+                out.innerHTML = `
+                    <div style="padding:1.1rem;border-radius:8px;border:1px solid rgba(224,82,82,0.4);background:rgba(224,82,82,0.08);font-size:0.9rem;">
+                        <i class="fas fa-exclamation-triangle" style="color:var(--danger);margin-right:0.5rem;"></i>
+                        No direct match found for <strong>"${code}"</strong>. Please verify the reference format (e.g., <strong>AUR-PH-001</strong>) or submit an appraisal request below.
+                    </div>
+                `;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateServicePrices();
+            window.addEventListener('aura:currencyChange', updateServicePrices);
+
+            document.getElementById('verifyForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                runVerification(document.getElementById('serialInput').value);
+            });
+
+            document.getElementById('serviceForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const ticket = `SRV-${Math.floor(10000 + Math.random() * 90000)}`;
+                const req = {
+                    ticket,
+                    name: document.getElementById('srvName').value.trim(),
+                    contact: document.getElementById('srvContact').value.trim(),
+                    watch: document.getElementById('srvWatch').value.trim(),
+                    type: document.getElementById('srvType').value,
+                    date: new Date().toLocaleDateString()
+                };
+                AuraApp.saveServiceRequest(req);
+                const box = document.getElementById('serviceSuccess');
+                box.style.display = 'block';
+                box.innerHTML = `<i class="fas fa-check-circle" style="color:var(--primary);"></i> Service Ticket <strong>${ticket}</strong> created for your <strong>${req.watch}</strong> (${req.type}). Our watchmaker concierge will contact you within 2 hours.`;
+                e.target.reset();
+                AuraApp.showToast(`Service request ${ticket} confirmed`);
+            });
+        });
+    </script>
+</body>
+</html>

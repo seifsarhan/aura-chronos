@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout | AURA CHRONOS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="siteNav"></div>
+
+    <section class="page-top">
+        <div class="section-header" style="margin-bottom:2.5rem;">
+            <span class="section-kicker"><i class="fas fa-lock"></i> 256-Bit TLS Encrypted Acquisition</span>
+            <h1 class="serif">Secure Checkout</h1>
+            <p>Complimentary armored white-glove courier or private boutique handover.</p>
+        </div>
+
+        <div id="checkoutContainer"></div>
+    </section>
+
+    <!-- ORDER SUCCESS OVERLAY -->
+    <div id="successOverlay" class="modal-overlay">
+        <div class="modal-box" style="max-width:600px;text-align:center;padding:2.75rem 2rem;">
+            <i class="fas fa-check-circle" style="color:var(--primary);font-size:4.5rem;margin-bottom:1.25rem;"></i>
+            <span class="section-kicker">Acquisition Confirmed</span>
+            <h2 class="serif" style="font-size:2.2rem;margin-bottom:0.65rem;">Thank You for Your Order</h2>
+            <p style="color:var(--text-muted);margin-bottom:1.5rem;">Your timepiece is now undergoing final chronometric inspection before armored dispatch.</p>
+            <div id="receiptBox" style="background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;padding:1.25rem;text-align:left;margin-bottom:1.75rem;"></div>
+            <div style="display:flex;gap:0.85rem;justify-content:center;flex-wrap:wrap;">
+                <a href="collections.html" class="btn btn-fill btn-sm">Continue Exploring</a>
+                <a href="index.html" class="btn btn-sm">Return Home</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="siteFooter"></div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const directId = parseInt(urlParams.get('id'), 10);
+        const directEngraving = urlParams.get('engraving') || '';
+
+        let paymentMethod = 'card';
+        let discountRate = 0;
+        let appliedPromo = '';
+
+        function getCheckoutItems() {
+            if (!isNaN(directId)) {
+                const p = products.find(pr => pr.id === directId);
+                if (p) return [{ product: p, qty: 1, engraving: directEngraving }];
+            }
+            return AuraApp.getCart().map(item => {
+                const p = products.find(pr => pr.id === item.id);
+                return p ? { product: p, qty: item.qty, engraving: item.engraving || '' } : null;
+            }).filter(Boolean);
+        }
+
+        function renderCheckout() {
+            const host = document.getElementById('checkoutContainer');
+            const items = getCheckoutItems();
+
+            if (items.length === 0) {
+                host.innerHTML = `
+                    <div class="panel" style="max-width:560px;margin:0 auto;text-align:center;padding:3.5rem 2rem;">
+                        <i class="fas fa-shopping-bag" style="font-size:3rem;color:var(--primary);margin-bottom:1rem;"></i>
+                        <h3 class="serif" style="font-size:1.7rem;margin-bottom:0.5rem;">Your Acquisition Bag is Empty</h3>
+                        <p style="color:var(--text-muted);margin-bottom:1.75rem;">Select a timepiece from our collections to proceed to secure checkout.</p>
+                        <a href="collections.html" class="btn btn-fill">Explore Collections</a>
+                    </div>
+                `;
+                return;
+            }
+
+            host.innerHTML = `
+                <form id="checkoutForm" class="checkout-layout">
+                    <!-- LEFT: CLIENT, DELIVERY, PAYMENT -->
+                    <div style="display:flex;flex-direction:column;gap:1.75rem;">
+                        <div class="panel">
+                            <h3 class="panel-title serif"><i class="fas fa-user-shield"></i> 1. Client &amp; Delivery Details</h3>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" id="clientName" placeholder="e.g., Karim El-Masry" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email Address</label>
+                                    <input type="email" id="clientEmail" placeholder="client@domain.com" required>
+                                </div>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label>Phone Number</label>
+                                    <input type="tel" id="clientPhone" placeholder="+20 100 000 0000" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Delivery Method</label>
+                                    <select id="deliveryMethod">
+                                        <option value="Armored White-Glove Courier">Armored White-Glove Courier (Free)</option>
+                                        <option value="Cairo Flagship Salon Pickup">Private Pickup — Cairo Arkan Plaza</option>
+                                        <option value="Geneva Atelier Pickup">Private Pickup — Geneva Rue du Rhône</option>
+                                        <option value="London Mayfair Pickup">Private Pickup — London New Bond St</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label>City / Region</label>
+                                    <input type="text" id="clientCity" placeholder="Cairo, Egypt" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Street Address</label>
+                                    <input type="text" id="clientAddress" placeholder="Building, Street, District" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <h3 class="panel-title serif"><i class="fas fa-credit-card"></i> 2. Payment Method</h3>
+                            <div class="payment-tabs">
+                                <button type="button" class="payment-tab active" data-method="card" onclick="selectPayment('card')">
+                                    <i class="fas fa-credit-card"></i><span>Card</span>
+                                </button>
+                                <button type="button" class="payment-tab" data-method="apple" onclick="selectPayment('apple')">
+                                    <i class="fab fa-apple-pay" style="font-size:1.5rem;"></i><span>Apple Pay</span>
+                                </button>
+                                <button type="button" class="payment-tab" data-method="wire" onclick="selectPayment('wire')">
+                                    <i class="fas fa-university"></i><span>Private Wire</span>
+                                </button>
+                            </div>
+
+                            <div id="paymentFieldsCard">
+                                <div class="form-group">
+                                    <label>Cardholder Name</label>
+                                    <input type="text" id="cardName" placeholder="NAME ON CARD" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Card Number</label>
+                                    <input type="text" id="cardNumber" placeholder="4532 0192 8473 1924" maxlength="19" required>
+                                </div>
+                                <div class="form-grid-2">
+                                    <div class="form-group">
+                                        <label>Expiry Date</label>
+                                        <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Security Code (CVV)</label>
+                                        <input type="password" id="cardCvv" placeholder="•••" maxlength="4" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="paymentFieldsAlt" style="display:none;padding:1.25rem;border:1px solid var(--gold-border);border-radius:8px;background:var(--primary-soft);font-size:0.9rem;color:var(--text-muted);">
+                                <i class="fas fa-shield-alt" style="color:var(--primary);margin-right:0.5rem;"></i>
+                                <span id="altPaymentNote">Instant biometric settlement via Apple Pay with full armored transit insurance.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: ORDER SUMMARY -->
+                    <div class="panel" style="position:sticky;top:calc(var(--nav-height) + 1.5rem);">
+                        <h3 class="panel-title serif"><i class="fas fa-gem"></i> Order Summary</h3>
+                        <div id="summaryItems"></div>
+
+                        <div style="display:flex;gap:0.5rem;margin:1.25rem 0;">
+                            <input type="text" id="promoInput" placeholder="Collector Code (Try AURA10)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);border-radius:4px;padding:0.65rem 0.85rem;color:var(--text);font-size:0.85rem;outline:none;">
+                            <button type="button" class="btn btn-sm" onclick="applyPromo()">Apply</button>
+                        </div>
+
+                        <div id="summaryTotals"></div>
+
+                        <button type="submit" id="submitOrderBtn" class="btn btn-fill" style="width:100%;margin-top:1.25rem;">
+                            <i class="fas fa-lock"></i> Authorize Acquisition
+                        </button>
+                        <p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:0.9rem;">
+                            <i class="fas fa-shield-alt" style="color:var(--primary);"></i> Includes 10-Year International Warranty &amp; Insured Transit
+                        </p>
+                    </div>
+                </form>
+            `;
+
+            updateSummarySection();
+            bindCardFormatting();
+
+            document.getElementById('checkoutForm').addEventListener('submit', handleCheckoutSubmit);
+        }
+
+        function updateSummarySection() {
+            const items = getCheckoutItems();
+            const subtotalEGP = items.reduce((sum, i) => sum + i.product.priceNum * i.qty, 0);
+            const discountEGP = Math.round(subtotalEGP * discountRate);
+            const totalEGP = subtotalEGP - discountEGP;
+
+            const itemsHost = document.getElementById('summaryItems');
+            if (itemsHost) {
+                itemsHost.innerHTML = items.map(i => `
+                    <div class="summary-item">
+                        <img src="${i.product.img}" alt="${i.product.name}">
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-size:0.68rem;letter-spacing:1.5px;color:var(--primary);text-transform:uppercase;">${i.product.brand}</div>
+                            <div class="serif" style="font-size:1.02rem;">${i.product.name} ${i.qty > 1 ? `× ${i.qty}` : ''}</div>
+                            ${i.engraving ? `<div style="font-size:0.74rem;color:var(--text-muted);">Engraving: "${i.engraving}"</div>` : ''}
+                        </div>
+                        <div class="price" style="font-size:0.92rem;white-space:nowrap;">${AuraApp.formatPrice(i.product.priceNum * i.qty)}</div>
+                    </div>
+                `).join('');
+            }
+
+            const totalsHost = document.getElementById('summaryTotals');
+            if (totalsHost) {
+                totalsHost.innerHTML = `
+                    <div class="summary-row"><span>Subtotal</span><span>${AuraApp.formatPrice(subtotalEGP)}</span></div>
+                    ${discountEGP > 0 ? `<div class="summary-row" style="color:var(--success);"><span>Privilege Code (${appliedPromo})</span><span>− ${AuraApp.formatPrice(discountEGP)}</span></div>` : ''}
+                    <div class="summary-row"><span>Armored Delivery &amp; Insurance</span><span style="color:var(--success);">Complimentary</span></div>
+                    <div class="summary-row"><span>Luxury Presentation Box</span><span style="color:var(--success);">Included</span></div>
+                    <div class="summary-row total"><span>Total Due</span><span>${AuraApp.formatPrice(totalEGP)}</span></div>
+                `;
+            }
+        }
+
+        function selectPayment(method) {
+            paymentMethod = method;
+            document.querySelectorAll('.payment-tab').forEach(t => t.classList.toggle('active', t.dataset.method === method));
+            const cardBlock = document.getElementById('paymentFieldsCard');
+            const altBlock = document.getElementById('paymentFieldsAlt');
+            const cardInputs = cardBlock.querySelectorAll('input');
+
+            if (method === 'card') {
+                cardBlock.style.display = 'block';
+                altBlock.style.display = 'none';
+                cardInputs.forEach(i => i.required = true);
+            } else {
+                cardBlock.style.display = 'none';
+                altBlock.style.display = 'block';
+                cardInputs.forEach(i => i.required = false);
+                document.getElementById('altPaymentNote').textContent = method === 'apple'
+                    ? 'Instant biometric settlement via Apple Pay with full armored transit insurance.'
+                    : 'Your timepiece will be reserved for 48 hours while our Geneva concierge sends dedicated Swiss IBAN wire instructions.';
+            }
+        }
+
+        function applyPromo() {
+            const code = (document.getElementById('promoInput')?.value || '').trim().toUpperCase();
+            if (code === 'AURA10' || code === 'VIP') {
+                discountRate = 0.10;
+                appliedPromo = code;
+                updateSummarySection();
+                AuraApp.showToast(`Collector privilege ${code} applied (10% off)`);
+            } else {
+                AuraApp.showToast('Invalid privilege code. Try AURA10.', 'fa-exclamation-circle');
+            }
+        }
+
+        function bindCardFormatting() {
+            const num = document.getElementById('cardNumber');
+            const exp = document.getElementById('cardExpiry');
+            num?.addEventListener('input', (e) => {
+                const digits = e.target.value.replace(/\D/g, '').slice(0, 16);
+                e.target.value = digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+            });
+            exp?.addEventListener('input', (e) => {
+                const digits = e.target.value.replace(/\D/g, '').slice(0, 4);
+                e.target.value = digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+            });
+        }
+
+        function handleCheckoutSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitOrderBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Authorizing with Vault...';
+
+            const items = getCheckoutItems();
+            const subtotalEGP = items.reduce((sum, i) => sum + i.product.priceNum * i.qty, 0);
+            const totalEGP = subtotalEGP - Math.round(subtotalEGP * discountRate);
+            const ref = `AUR-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+            const clientName = document.getElementById('clientName').value.trim();
+            const delivery = document.getElementById('deliveryMethod').value;
+
+            const order = {
+                ref,
+                clientName,
+                delivery,
+                paymentMethod,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                status: 'Confirmed — Preparing Armored Dispatch',
+                totalEGP,
+                items: items.map(i => ({ id: i.product.id, name: i.product.name, qty: i.qty, engraving: i.engraving }))
+            };
+
+            setTimeout(() => {
+                AuraApp.saveOrder(order);
+                if (isNaN(directId)) AuraApp.clearCart();
+
+                document.getElementById('receiptBox').innerHTML = `
+                    <div class="summary-row"><span>Order Reference</span><strong style="color:var(--primary);">${order.ref}</strong></div>
+                    <div class="summary-row"><span>Client</span><span>${order.clientName}</span></div>
+                    <div class="summary-row"><span>Handover</span><span>${order.delivery}</span></div>
+                    <div class="summary-row"><span>Timepieces</span><span>${order.items.map(i => `${i.qty}× ${i.name}`).join(', ')}</span></div>
+                    <div class="summary-row total"><span>Total Paid</span><span>${AuraApp.formatPrice(order.totalEGP)}</span></div>
+                `;
+                AuraApp.openModal('successOverlay');
+            }, 1600);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCheckout();
+            window.addEventListener('aura:currencyChange', updateSummarySection);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timepiece Details | AURA CHRONOS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="siteNav"></div>
+
+    <section class="page-top">
+        <div class="breadcrumb" id="breadcrumb">
+            <a href="index.html">Home</a>
+            <span>/</span>
+            <a href="collections.html">Collections</a>
+            <span>/</span>
+            <span id="crumbName" style="color:var(--primary);">Timepiece</span>
+        </div>
+
+        <div class="product-detail" id="productDetail"></div>
+    </section>
+
+    <!-- RELATED TIMEPIECES -->
+    <section style="background: var(--bg-light); border-top: 1px solid var(--glass-border);">
+        <div class="section-header reveal">
+            <span class="section-kicker">Continue Exploring</span>
+            <h2 class="serif">Related Timepieces</h2>
+        </div>
+        <div class="grid" id="relatedGrid"></div>
+    </section>
+
+    <!-- IMAGE LIGHTBOX MODAL -->
+    <div class="modal-overlay" id="lightboxModal" onclick="AuraApp.closeModal('lightboxModal')">
+        <div style="position:relative;max-width:min(760px,94vw);" onclick="event.stopPropagation()">
+            <button class="modal-close" style="position:absolute;top:1rem;right:1rem;" onclick="AuraApp.closeModal('lightboxModal')"><i class="fas fa-times"></i></button>
+            <img id="lightboxImg" src="" alt="Enlarged timepiece view" style="width:100%;border-radius:12px;border:1px solid var(--gold-border);">
+        </div>
+    </div>
+
+    <div id="siteFooter"></div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = parseInt(urlParams.get('id'), 10);
+        const product = products.find(p => p.id === productId) || products[0];
+
+        document.title = `${product.name} | AURA CHRONOS`;
+
+        function renderProductPage() {
+            document.getElementById('crumbName').textContent = product.name;
+            const wished = AuraApp.isWishlisted(product.id);
+
+            document.getElementById('productDetail').innerHTML = `
+                <div class="product-gallery">
+                    <div class="product-detail-img" onclick="openLightbox('${product.img}')">
+                        <span class="watch-badge">${product.badge}</span>
+                        <img src="${product.img}" alt="${product.name}">
+                        <span style="position:absolute;bottom:1rem;right:1rem;background:rgba(5,5,6,0.75);padding:0.4rem 0.75rem;border-radius:4px;font-size:0.72rem;letter-spacing:1.2px;color:var(--text-muted);border:1px solid var(--glass-border);">
+                            <i class="fas fa-search-plus" style="color:var(--primary);"></i> Zoom
+                        </span>
+                    </div>
+                    <div class="product-trust-strip">
+                        <div class="trust-chip"><i class="fas fa-shield-alt"></i>10-Year Warranty</div>
+                        <div class="trust-chip"><i class="fas fa-certificate"></i>COSC Certified</div>
+                        <div class="trust-chip"><i class="fas fa-truck"></i>Armored Courier</div>
+                    </div>
+                </div>
+
+                <div class="product-detail-info">
+                    <span class="section-kicker">${product.brand} · REF. ${product.ref}</span>
+                    <h1 class="serif">${product.name}</h1>
+                    <span class="price">${AuraApp.formatPrice(product.priceNum)}</span>
+
+                    <div class="availability-tag">
+                        <span class="availability-dot"></span>
+                        <span>${product.availability}</span>
+                    </div>
+
+                    <p style="color:var(--text-muted);font-size:1.05rem;margin-bottom:1.1rem;">${product.desc}</p>
+                    <p style="color:var(--text-muted);font-size:0.95rem;">${product.story}</p>
+
+                    <div class="engraving-box">
+                        <label for="engravingInput">
+                            <span><i class="fas fa-pen-nib"></i> Complimentary Caseback Engraving</span>
+                            <span style="color:var(--text-muted);font-size:0.7rem;">Optional · Max 18 chars</span>
+                        </label>
+                        <input type="text" id="engravingInput" maxlength="18" placeholder="e.g., A.M. · 2026">
+                    </div>
+
+                    <div class="product-cta-group">
+                        <button class="btn btn-fill" onclick="handleAddProduct()">
+                            <i class="fas fa-shopping-bag"></i> Add to Bag
+                        </button>
+                        <button class="btn" onclick="handleBuyNow()">
+                            Acquire Now
+                        </button>
+                    </div>
+
+                    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:2rem;">
+                        <button class="btn btn-ghost btn-sm ${wished ? 'active' : ''}" data-wishlist-id="${product.id}" onclick="AuraApp.toggleWishlist(${product.id})">
+                            <i class="${wished ? 'fas' : 'far'} fa-heart"></i> ${wished ? 'Saved in Vault' : 'Save to Vault'}
+                        </button>
+                        <a href="boutiques.html?watch=${encodeURIComponent(product.name)}#appointment" class="btn btn-ghost btn-sm">
+                            <i class="fas fa-calendar-check"></i> Request Private Viewing
+                        </a>
+                    </div>
+
+                    <h3 class="serif" style="font-size:1.45rem;">Technical Specifications</h3>
+                    <div class="specs-grid">
+                        <div class="spec-item"><div class="spec-label">Caliber</div><div class="spec-value">${product.specs.caliber}</div></div>
+                        <div class="spec-item"><div class="spec-label">Case Diameter</div><div class="spec-value">${product.specs.diameter}</div></div>
+                        <div class="spec-item"><div class="spec-label">Profile Thickness</div><div class="spec-value">${product.specs.thickness}</div></div>
+                        <div class="spec-item"><div class="spec-label">Case Material</div><div class="spec-value">${product.specs.caseMaterial}</div></div>
+                        <div class="spec-item"><div class="spec-label">Water Resistance</div><div class="spec-value">${product.specs.waterResistance}</div></div>
+                        <div class="spec-item"><div class="spec-label">Power Reserve</div><div class="spec-value">${product.specs.powerReserve}</div></div>
+                        <div class="spec-item"><div class="spec-label">Crystal</div><div class="spec-value">${product.specs.crystal}</div></div>
+                        <div class="spec-item"><div class="spec-label">Bracelet / Strap</div><div class="spec-value">${product.specs.strap}</div></div>
+                    </div>
+                </div>
+            `;
+
+            // Related Watches
+            const related = products.filter(p => p.id !== product.id)
+                .sort((a, b) => (a.category === product.category ? -1 : 1))
+                .slice(0, 3);
+            document.getElementById('relatedGrid').innerHTML = related.map(p => AuraApp.renderWatchCard(p)).join('');
+            AuraApp.observeReveals();
+        }
+
+        function handleAddProduct() {
+            const engraving = document.getElementById('engravingInput')?.value || '';
+            AuraApp.addToCart(product.id, 1, engraving);
+        }
+
+        function handleBuyNow() {
+            const engraving = document.getElementById('engravingInput')?.value.trim() || '';
+            const query = engraving ? `id=${product.id}&engraving=${encodeURIComponent(engraving)}` : `id=${product.id}`;
+            window.location.href = `checkout.html?${query}`;
+        }
+
+        function openLightbox(src) {
+            document.getElementById('lightboxImg').src = src;
+            AuraApp.openModal('lightboxModal');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProductPage();
+            window.addEventListener('aura:currencyChange', renderProductPage);
+        });
+    </script>
+</body>
+</html>
